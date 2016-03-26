@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.administrator.activityloghelper.DragLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/debug_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#803c3c3c"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="#000000" />
+</com.example.administrator.activityloghelper.DragLayout>
