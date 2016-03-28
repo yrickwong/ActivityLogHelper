@@ -10,7 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 
 public class ViewDebugService extends AccessibilityService {
 
-
+    private String currentActivityName;
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         getCurrentActivityName(event);
@@ -20,7 +20,6 @@ public class ViewDebugService extends AccessibilityService {
         if (event.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             return;
         }
-        String currentActivityName = null;
         try {
             String pkgName = event.getPackageName().toString();
             String className = event.getClassName().toString();
@@ -29,6 +28,8 @@ public class ViewDebugService extends AccessibilityService {
             currentActivityName = componentName.flattenToShortString();
             Log.d("ViewDebugService", "cur=" + currentActivityName);
         } catch (PackageManager.NameNotFoundException e) {
+            //只是窗口变化，并无activity调转
+            Log.d("ViewDebugService", "e=" + e.getLocalizedMessage());
         }
         MessageEvent msg = new MessageEvent();
         msg.info = currentActivityName;

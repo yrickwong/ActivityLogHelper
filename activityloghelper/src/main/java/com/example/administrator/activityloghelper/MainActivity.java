@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, REQUEST_CODE);
+        } else {
+            WindowUtils.showWindow(this);
         }
     }
 
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 更新当前 HongbaoService 显示状态
+     * 更新当前 ViewDebugService 显示状态
      */
     private void updateServiceStatus() {
         if (isServiceEnabled()) {
@@ -121,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 获取 ViewDebugService 是否启用状态
      *
-     * @return
+     * @return true:serviceEnable
      */
     private boolean isServiceEnabled() {
         List<AccessibilityServiceInfo> accessibilityServices =

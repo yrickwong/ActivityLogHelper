@@ -4,13 +4,15 @@
     android:id="@+id/small_window_layout"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:background="#2baaaaaa"
+    android:background="#803c3c3c"
     >
-    <TextView 
+
+    <TextView
+        android:textSize="16sp"
         android:id="@+id/float_textview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
         />
 </LinearLayout>

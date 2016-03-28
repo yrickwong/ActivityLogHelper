@@ -58,6 +58,9 @@ public class FloatWindowView extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //获取到手指处的横坐标和纵坐标
+        int x = (int) event.getX();
+        int y = (int) event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 手指按下时记录必要数据,纵坐标的值都需要减去状态栏高度
