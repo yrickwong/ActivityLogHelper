@@ -1,2 +1,2 @@
 # ViewDebugHelper
-An android app which can watch current Activify
+An android app which can watch current Activity
