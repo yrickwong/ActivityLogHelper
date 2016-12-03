@@ -29,12 +29,14 @@ public class WindowUtils {
         params.y = screenHeight / 2;//初始化位置在屏幕中心
         mFloatWindow.setParams(params);
         windowManager.addView(mView, params);
+        mFloatWindow.setShowing(true);
     }
 
     public static void hideWindow(Context context) {
         Context appContext = context.getApplicationContext();
         WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
         windowManager.removeView(mFloatWindow);
+        mFloatWindow.setShowing(false);
     }
 
 
@@ -43,6 +45,13 @@ public class WindowUtils {
             mFloatWindow = new FloatWindowView(context);
         }
         return mFloatWindow;
+    }
+
+    public static boolean isWindowShowing(){
+        if(mFloatWindow==null){
+            return false;
+        }
+        return mFloatWindow.isShowing();
     }
 
 }

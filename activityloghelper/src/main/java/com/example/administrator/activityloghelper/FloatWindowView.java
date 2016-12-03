@@ -47,6 +47,7 @@ public class FloatWindowView extends LinearLayout {
 
     private final TextView debugView;
 
+    private boolean isShowing=false;
 
     public FloatWindowView(Context context) {
         super(context);
@@ -137,5 +138,12 @@ public class FloatWindowView extends LinearLayout {
         if(debugView!=null){
             debugView.setText(msg.info);
         }
+    }
+
+    public void setShowing(boolean flag) {
+        isShowing=flag;
+    }
+    public boolean isShowing() {
+        return isShowing;
     }
 }

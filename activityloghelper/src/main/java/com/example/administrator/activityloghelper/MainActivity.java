@@ -73,10 +73,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openWindow() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestAlertWindowPermission();
-        } else {
-            WindowUtils.showWindow(this);
+        if(!WindowUtils.isWindowShowing()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestAlertWindowPermission();
+            } else {
+                WindowUtils.showWindow(this);
+            }
+        }else {
+            Toast.makeText(this, "窗口已经启动过了!", Toast.LENGTH_SHORT).show();
         }
     }
 
