@@ -15,6 +15,10 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
         updateServiceStatus();
+        updateWindowStatus();
+        EventBus.getDefault().register(this);
     }
 
 
@@ -73,24 +79,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openWindow() {
-        if(!WindowUtils.isWindowShowing()){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestAlertWindowPermission();
+        if (!WindowUtils.isWindowShowing()) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                checkNeedRequestPermission();
             } else {
                 WindowUtils.showWindow(this);
             }
-        }else {
-            Toast.makeText(this, "窗口已经启动过了!", Toast.LENGTH_SHORT).show();
+        } else {
+            WindowUtils.hideWindow(this);
+        }
+    }
+
+    private void updateWindowStatus() {
+        if (WindowUtils.isWindowShowing()) {
+            openWindowBtn.setText(R.string.window_off);
+        } else {
+            openWindowBtn.setText(R.string.window_on);
         }
     }
 
     @SuppressLint("NewApi")
-    private void requestAlertWindowPermission() {
+    private void checkNeedRequestPermission() {
+        //未授权，引导
         if (!Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivityForResult(intent, REQUEST_CODE);
         } else {
+            //已经授权，直接show
             WindowUtils.showWindow(this);
         }
     }
@@ -103,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (Settings.canDrawOverlays(this)) {
                 WindowUtils.showWindow(this);
             } else {
-                Toast.makeText(this, "没有被授权,无法弹system_alert", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.permission_decline, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -144,6 +160,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         //移除监听服务
         accessibilityManager.removeAccessibilityStateChangeListener(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateWindowStatus(WindowEvent event) {
+        updateWindowStatus();
     }
 }

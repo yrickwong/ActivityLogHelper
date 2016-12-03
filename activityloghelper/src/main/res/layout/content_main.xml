@@ -17,7 +17,7 @@
         android:id="@+id/openWindowBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点我开启ViewDebugHelper" />
+        android:text="点我开启ViewDebugHelper窗口" />
 
     <Button
         android:id="@+id/openServerBtn"
