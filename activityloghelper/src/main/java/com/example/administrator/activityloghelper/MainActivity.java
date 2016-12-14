@@ -2,6 +2,7 @@ package com.example.administrator.activityloghelper;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void openWindow() {
         if (!WindowUtils.isWindowShowing()) {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                checkNeedRequestPermission();
+                checkNeedRequestPermission(this);
             } else {
                 WindowUtils.showWindow(this);
             }
@@ -99,15 +100,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @SuppressLint("NewApi")
-    private void checkNeedRequestPermission() {
+    private static void checkNeedRequestPermission(Activity context) {
         //未授权，引导
-        if (!Settings.canDrawOverlays(this)) {
+        if (!Settings.canDrawOverlays(context)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            intent.setData(Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, REQUEST_CODE);
+            intent.setData(Uri.parse("package:" + context.getPackageName()));
+            context.startActivityForResult(intent, REQUEST_CODE);
         } else {
             //已经授权，直接show
-            WindowUtils.showWindow(this);
+            WindowUtils.showWindow(context);
         }
     }
 
