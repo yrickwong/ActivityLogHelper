@@ -47,7 +47,7 @@ public class FloatWindowView extends LinearLayout {
 
     private final TextView debugView;
 
-    private boolean isShowing=false;
+    private boolean isShowing = false;
 
     public FloatWindowView(Context context) {
         super(context);
@@ -56,6 +56,10 @@ public class FloatWindowView extends LinearLayout {
         debugView = (TextView) findViewById(R.id.float_textview);
     }
 
+    /**
+     * debugView是否在拖拽中
+     */
+    private boolean isDragging = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -64,20 +68,25 @@ public class FloatWindowView extends LinearLayout {
         int y = (int) event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                isDragging = false;//重置状态
                 // 手指按下时记录必要数据,纵坐标的值都需要减去状态栏高度
                 yInView = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                isDragging = true;//正在移动ing
                 yInScreen = event.getRawY() - getStatusBarHeight();
                 // 手指移动的时候更新小悬浮窗的位置
                 updateViewPosition();
                 break;
             case MotionEvent.ACTION_UP:
+                if (isDragging) {//说明是拖拽中，放手的时候不让onClick执行
+                    return true;
+                }
                 break;
             default:
                 break;
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
 
@@ -135,14 +144,15 @@ public class FloatWindowView extends LinearLayout {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWindowChanged(MessageEvent msg) {
-        if(debugView!=null){
+        if (debugView != null) {
             debugView.setText(msg.info);
         }
     }
 
     public void setShowing(boolean flag) {
-        isShowing=flag;
+        isShowing = flag;
     }
+
     public boolean isShowing() {
         return isShowing;
     }
