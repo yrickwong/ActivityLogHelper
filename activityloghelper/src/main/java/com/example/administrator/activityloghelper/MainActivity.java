@@ -2,11 +2,8 @@ package com.example.administrator.activityloghelper;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +12,8 @@ import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.administrator.activityloghelper.utils.PermissionUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "MainActivity";
 
-    private static final int REQUEST_CODE = 1;
+    public static final int REQUEST_CODE = 1;
 
     //AccessibilityService 管理
     private AccessibilityManager accessibilityManager;
@@ -81,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void openWindow() {
         if (!WindowUtils.isWindowShowing()) {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                checkNeedRequestPermission(this);
+            //是否需要授权?
+            if (!PermissionUtils.checkFloatWindowPermission()) {
+                PermissionUtils.applyAuthorizePermission(this);
             } else {
                 WindowUtils.showWindow(this);
             }
@@ -100,27 +100,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @SuppressLint("NewApi")
-    private static void checkNeedRequestPermission(Activity context) {
-        //未授权，引导
-        if (!Settings.canDrawOverlays(context)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            intent.setData(Uri.parse("package:" + context.getPackageName()));
-            context.startActivityForResult(intent, REQUEST_CODE);
-        } else {
-            //已经授权，直接show
-            WindowUtils.showWindow(context);
-        }
-    }
-
-    @SuppressLint("NewApi")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
-            if (Settings.canDrawOverlays(this)) {
-                WindowUtils.showWindow(this);
-            } else {
+            if (!PermissionUtils.checkFloatWindowPermission()) {
                 Toast.makeText(this, R.string.permission_decline, Toast.LENGTH_SHORT).show();
+            } else {
+                WindowUtils.showWindow(this);
             }
         }
     }
