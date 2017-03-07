@@ -17,14 +17,14 @@ public class WindowUtils {
     private static IWindowPolicy mPolicy;
 
     static {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
             mPolicy = new IWindowPolicy() {
                 @Override
                 public int getWindowManagerParamsType() {
                     return WindowManager.LayoutParams.TYPE_PHONE;
                 }
             };
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mPolicy = new IWindowPolicy() {
                 @Override
                 public int getWindowManagerParamsType() {

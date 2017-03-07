@@ -27,8 +27,10 @@ import java.lang.reflect.Method;
 public class PermissionUtils {
 
     public static boolean checkFloatWindowPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
             return Settings.canDrawOverlays(LogHelperApplication.getInstance());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return !RomUtils.isDomesticSpecialRom() || Settings.canDrawOverlays(LogHelperApplication.getInstance());
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //AppOpsManager添加于API 19
             return checkOps();
@@ -81,10 +83,10 @@ public class PermissionUtils {
             Field field = clazz.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
             Intent intent = new Intent(field.get(null).toString());
             intent.setData(Uri.parse("package:" + context.getPackageName()));
-            if(context instanceof Activity){
-                Activity activity= (Activity) context;
+            if (context instanceof Activity) {
+                Activity activity = (Activity) context;
                 activity.startActivityForResult(intent, MainActivity.REQUEST_CODE);
-            }else {
+            } else {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
@@ -387,15 +389,15 @@ public class PermissionUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             applyCommonPermission(context);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if(RomUtils.checkIs360Rom()){
+            if (RomUtils.checkIs360Rom()) {
                 apply360Permission(context);
-            }else if(RomUtils.isMiuiRom()){
+            } else if (RomUtils.isMiuiRom()) {
                 applyMiuiPermission(context);
-            }else if(RomUtils.isHuaweiRom()){
+            } else if (RomUtils.isHuaweiRom()) {
                 applyHuaweiPermission(context);
-            }else if(RomUtils.isOppoRom()){
+            } else if (RomUtils.isOppoRom()) {
                 applyHuaweiPermission(context);
-            }else {
+            } else {
                 Toast.makeText(context, "此rom未适配,请联系开发！", Toast.LENGTH_LONG).show();
             }
         }
