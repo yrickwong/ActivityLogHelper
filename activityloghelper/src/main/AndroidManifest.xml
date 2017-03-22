@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.example.administrator.activityloghelper.ViewDebugService"
+            android:name="com.example.administrator.activityloghelper.services.ViewDebugService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService"/>

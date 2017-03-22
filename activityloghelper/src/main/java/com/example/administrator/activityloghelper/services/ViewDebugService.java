@@ -1,10 +1,13 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.services;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+
+import com.example.administrator.activityloghelper.MessageEvent;
+import com.example.administrator.activityloghelper.WindowUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
