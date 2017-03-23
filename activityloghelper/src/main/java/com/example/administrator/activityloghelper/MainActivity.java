@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onAccessibilityStateChanged(boolean enabled) {
+        Log.d("wangyi","en="+enabled);
         updateServiceStatus();
     }
 
@@ -137,7 +139,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<AccessibilityServiceInfo> accessibilityServices =
                 accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
         for (AccessibilityServiceInfo info : accessibilityServices) {
-            if (info.getId().equals(getPackageName() + "/.ViewDebugService")) {
+            Log.d("wangyi","info="+info.getId());
+            if (info.getId().equals(getPackageName() + "/services.ViewDebugService")) {
                 return true;
             }
         }
