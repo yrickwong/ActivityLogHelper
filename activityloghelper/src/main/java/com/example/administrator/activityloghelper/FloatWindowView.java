@@ -3,6 +3,7 @@ package com.example.administrator.activityloghelper;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,11 +52,15 @@ public class FloatWindowView extends LinearLayout {
 
     private Position currentPosition = new Position();
 
+    private final int mTouchSlop;
+    private float xInView;
+
     public FloatWindowView(Context context) {
         super(context);
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         LayoutInflater.from(context).inflate(R.layout.float_window_small, this);
         debugView = (TextView) findViewById(R.id.float_textview);
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     /**
@@ -74,9 +79,14 @@ public class FloatWindowView extends LinearLayout {
                 isDragging = false;//重置状态
                 // 手指按下时记录必要数据,纵坐标的值都需要减去状态栏高度
                 yInView = event.getY();
+                xInView = event.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
-                isDragging = true;//正在移动ing
+                int dx = (int) (event.getX() - xInView);
+                int dy = (int) (event.getY() - yInView);
+                if (checkTouchSlop(dx, dy)) {
+                    isDragging = true;//正在移动ing
+                }
                 yInScreen = event.getRawY() - getStatusBarHeight();
                 // 手指移动的时候更新小悬浮窗的位置
                 updateViewPosition();
@@ -85,11 +95,23 @@ public class FloatWindowView extends LinearLayout {
                 if (isDragging) {//说明是拖拽中，放手的时候不让onClick执行
                     return true;
                 }
+                setCurrentPosition();
                 break;
             default:
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * 表示滑动的时候，手的移动要大于这个距离才开始移动控件。如果小于这个距离就不触发移动控件
+     *
+     * @param dx
+     * @param dy
+     * @return
+     */
+    public boolean checkTouchSlop(int dx, int dy) {
+        return dx * dx + dy * dy > mTouchSlop * mTouchSlop;
     }
 
 
@@ -107,7 +129,6 @@ public class FloatWindowView extends LinearLayout {
      */
     private void updateViewPosition() {
         mParams.y = (int) (yInScreen - yInView);
-        setCurrentPosition();
         windowManager.updateViewLayout(this, mParams);
     }
 
