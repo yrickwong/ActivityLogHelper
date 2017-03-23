@@ -58,6 +58,9 @@ public class WindowUtils {
         params.gravity = Gravity.LEFT | Gravity.TOP;
         params.x = screenWidth;
         params.y = screenHeight / 2;//初始化位置在屏幕中心
+        if (getLastFloatViewPositionY() != 0) {
+            params.y = getLastFloatViewPositionY();
+        }
         mFloatWindow.setParams(params);
         mFloatWindow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,4 +108,8 @@ public class WindowUtils {
         return mFloatWindow.isShowing();
     }
 
+
+    public static int getLastFloatViewPositionY() {
+        return mFloatWindow.getCurrentPosition().Y;
+    }
 }

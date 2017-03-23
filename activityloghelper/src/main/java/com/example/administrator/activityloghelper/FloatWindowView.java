@@ -49,6 +49,8 @@ public class FloatWindowView extends LinearLayout {
 
     private boolean isShowing = false;
 
+    private Position currentPosition = new Position();
+
     public FloatWindowView(Context context) {
         super(context);
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -60,6 +62,7 @@ public class FloatWindowView extends LinearLayout {
      * debugView是否在拖拽中
      */
     private boolean isDragging = false;
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -99,15 +102,29 @@ public class FloatWindowView extends LinearLayout {
         mParams = params;
     }
 
-
     /**
      * 更新小悬浮窗在屏幕中的位置。
      */
     private void updateViewPosition() {
         mParams.y = (int) (yInScreen - yInView);
+        setCurrentPosition();
         windowManager.updateViewLayout(this, mParams);
     }
 
+    public Position setCurrentPosition() {
+        currentPosition.X = mParams.x;
+        currentPosition.Y = mParams.y;
+        return currentPosition;
+    }
+
+    public Position getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public static class Position {
+        int X;
+        int Y;
+    }
 
     /**
      * 用于获取状态栏的高度。
