@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
         for (AccessibilityServiceInfo info : accessibilityServices) {
             Log.d("wangyi","info="+info.getId());
-            if (info.getId().equals(getPackageName() + "/services.ViewDebugService")) {
+            if (info.getId().equals(getPackageName() + "/.services.ViewDebugService")) {
                 return true;
             }
         }
