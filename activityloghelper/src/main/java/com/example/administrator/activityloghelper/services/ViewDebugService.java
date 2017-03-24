@@ -47,6 +47,6 @@ public class ViewDebugService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        WindowUtils.hideWindow(this);
+        WindowUtils.hideWindow();
     }
 }

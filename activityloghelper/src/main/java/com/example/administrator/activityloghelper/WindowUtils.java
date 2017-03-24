@@ -45,7 +45,7 @@ public class WindowUtils {
     public static void showWindow(final Context context) {
         Context appContext = context.getApplicationContext();
         WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        View mView = setUpView(context);
+        View mView = setUpView(appContext);
         int screenWidth = windowManager.getDefaultDisplay().getWidth();
         int screenHeight = windowManager.getDefaultDisplay().getHeight();
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -79,12 +79,6 @@ public class WindowUtils {
         EventBus.getDefault().post(event);
     }
 
-    public static void hideWindow(Context context) {
-        Context appContext = context.getApplicationContext();
-        WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.removeView(mFloatWindow);
-        updateWindowStatus(false);
-    }
 
     public static void hideWindow() {
         Context appContext = LogHelperApplication.getInstance();

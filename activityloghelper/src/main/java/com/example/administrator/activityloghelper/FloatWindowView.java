@@ -95,7 +95,6 @@ public class FloatWindowView extends LinearLayout {
                 if (isDragging) {//说明是拖拽中，放手的时候不让onClick执行
                     return true;
                 }
-                setCurrentPosition();
                 break;
             default:
                 break;
@@ -129,6 +128,7 @@ public class FloatWindowView extends LinearLayout {
      */
     private void updateViewPosition() {
         mParams.y = (int) (yInScreen - yInView);
+        setCurrentPosition();
         windowManager.updateViewLayout(this, mParams);
     }
 
