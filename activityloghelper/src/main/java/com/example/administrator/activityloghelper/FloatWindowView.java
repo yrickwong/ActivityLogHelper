@@ -8,12 +8,17 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.administrator.activityloghelper.services.ViewDebugService;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Field;
 
+/**
+ * view不应该有业务逻辑
+ */
 public class FloatWindowView extends LinearLayout {
 
 
@@ -172,6 +177,11 @@ public class FloatWindowView extends LinearLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         EventBus.getDefault().register(this);
+        if (ViewDebugService.isServiceEnabled()) {
+            MessageEvent msg = new MessageEvent();
+            msg.info = "com.example.administrator.activityloghelper/.MainActivity";
+            EventBus.getDefault().post(msg);
+        }
     }
 
     @Override

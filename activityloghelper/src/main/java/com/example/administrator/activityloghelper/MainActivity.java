@@ -1,6 +1,5 @@
 package com.example.administrator.activityloghelper;
 
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -13,13 +12,12 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.administrator.activityloghelper.services.ViewDebugService;
 import com.example.administrator.activityloghelper.utils.PermissionUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,8 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static final int REQUEST_CODE = 1;
 
-    //AccessibilityService 管理
-    private AccessibilityManager accessibilityManager;
 
     @Bind(R.id.openWindowBtn)
     Button openWindowBtn;
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         openWindowBtn.setOnClickListener(this);
         switchPlugin.setOnClickListener(this);
         //监听AccessibilityService 变化
-        accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+        AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
         updateServiceStatus();
         updateWindowStatus();
@@ -121,32 +117,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 更新当前 ViewDebugService 显示状态
      */
     private void updateServiceStatus() {
-        if (isServiceEnabled()) {
+        if (ViewDebugService.isServiceEnabled()) {
             switchPlugin.setText(R.string.service_off);
         } else {
             switchPlugin.setText(R.string.service_on);
         }
     }
 
-    /**
-     * 获取 ViewDebugService 是否启用状态
-     *
-     * @return true:serviceEnable
-     */
-    private boolean isServiceEnabled() {
-        List<AccessibilityServiceInfo> accessibilityServices =
-                accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
-        for (AccessibilityServiceInfo info : accessibilityServices) {
-            if (info.getId().equals(getPackageName() + "/.services.ViewDebugService")) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     protected void onDestroy() {
         //移除监听服务
+        AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.removeAccessibilityStateChangeListener(this);
         EventBus.getDefault().unregister(this);
         super.onDestroy();
