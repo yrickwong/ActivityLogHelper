@@ -49,9 +49,8 @@ public class FloatWindowViewLogic implements IFloatWindowLifecycle {
 
     private boolean showing;
 
-    private View setUpView(Context context) {
+    public FloatWindowViewLogic(Context context) {
         mFloatWindow = new FloatWindowView(context);
-        return mFloatWindow;
     }
 
     private void updateWindowStatus(boolean flag) {
@@ -69,7 +68,7 @@ public class FloatWindowViewLogic implements IFloatWindowLifecycle {
     public void onCreate(Context context) {
         Context appContext = context.getApplicationContext();
         WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        View mView = setUpView(appContext);
+        View mView = mFloatWindow;
         int screenWidth = windowManager.getDefaultDisplay().getWidth();
         int screenHeight = windowManager.getDefaultDisplay().getHeight();
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams();

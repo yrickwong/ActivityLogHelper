@@ -9,7 +9,7 @@ public class WindowUtils {
 
     public static void showWindow(final Context context) {
         if (mFloatWindowLogic == null) {
-            mFloatWindowLogic = new FloatWindowViewLogic();
+            mFloatWindowLogic = new FloatWindowViewLogic(context);
         }
         mFloatWindowLogic.onCreate(context);
     }
