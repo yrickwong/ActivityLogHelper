@@ -1,4 +1,4 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.window;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -8,6 +8,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 
+import com.example.administrator.activityloghelper.LogHelperApplication;
+import com.example.administrator.activityloghelper.WindowEvent;
+import com.example.administrator.activityloghelper.window.floatview.FloatWindowView;
+
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -16,9 +20,7 @@ import org.greenrobot.eventbus.EventBus;
  * 整个floatview的业务逻辑全部在这里来实现
  */
 
-public class FloatWindowViewLogic implements IFloatWindowLifecycle {
-
-    private static IWindowPolicy mPolicy;
+public abstract class XWindowView implements IXWindow {
 
     static {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
@@ -45,13 +47,12 @@ public class FloatWindowViewLogic implements IFloatWindowLifecycle {
         }
     }
 
-    private FloatWindowView mFloatWindow;
+    private static IWindowPolicy mPolicy;
 
     private boolean showing;
 
-    public FloatWindowViewLogic(Context context) {
-        mFloatWindow = new FloatWindowView(context);
-    }
+    private View mContentView;
+
 
     private void updateWindowStatus(boolean flag) {
         showing = flag;
@@ -60,15 +61,21 @@ public class FloatWindowViewLogic implements IFloatWindowLifecycle {
         EventBus.getDefault().post(event);
     }
 
-    private int getLastFloatViewPositionY() {
-        return mFloatWindow.getCurrentPosition().Y;
-    }
-
     @Override
     public void onCreate(Context context) {
-        Context appContext = context.getApplicationContext();
+        mContentView = onCreateView(context);
+        if (mContentView == null) {
+            throw new IllegalArgumentException("view can not be null!");
+        }
+        setContentView(mContentView);
+        updateWindowStatus(true);
+    }
+
+    protected abstract View onCreateView(Context context);
+
+    private void setContentView(View view) {
+        Context appContext = view.getContext().getApplicationContext();
         WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        View mView = mFloatWindow;
         int screenWidth = windowManager.getDefaultDisplay().getWidth();
         int screenHeight = windowManager.getDefaultDisplay().getHeight();
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -81,25 +88,23 @@ public class FloatWindowViewLogic implements IFloatWindowLifecycle {
         params.gravity = Gravity.LEFT | Gravity.TOP;
         params.x = screenWidth;
         params.y = screenHeight / 2;//初始化位置在屏幕中心
-        if (getLastFloatViewPositionY() != 0) {
-            params.y = getLastFloatViewPositionY();
+        if (view instanceof FloatWindowView) {
+            ((FloatWindowView) view).setParams(params);
         }
-        mFloatWindow.setParams(params);
-        mFloatWindow.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FloatWindowViewLogic.this.onDestroy();
+                XWindowView.this.onDestroy();
             }
         });
-        windowManager.addView(mView, params);
-        updateWindowStatus(true);
+        windowManager.addView(view, params);
     }
 
     @Override
     public void onDestroy() {
         Context appContext = LogHelperApplication.getInstance();
         WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.removeView(mFloatWindow);
+        windowManager.removeView(mContentView);
         updateWindowStatus(false);
     }
 

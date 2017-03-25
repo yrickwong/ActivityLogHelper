@@ -1,4 +1,4 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.window;
 
 import android.content.Context;
 
@@ -7,7 +7,7 @@ import android.content.Context;
  * 为几个view添加生命周期
  */
 
-public interface IFloatWindowLifecycle {
+public interface IXWindow {
     void onCreate(Context context);
 
     void onDestroy();

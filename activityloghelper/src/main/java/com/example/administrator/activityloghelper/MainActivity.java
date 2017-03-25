@@ -75,20 +75,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openWindow() {
-        if (!WindowUtils.isWindowShowing()) {
+        if (!WindowManager.isWindowShowing()) {
             //是否需要授权?
             if (!PermissionUtils.checkFloatWindowPermission()) {
                 PermissionUtils.applyAuthorizePermission(this);
             } else {
-                WindowUtils.showWindow(this);
+                WindowManager.showWindow(this);
             }
         } else {
-            WindowUtils.hideWindow();
+            WindowManager.hideWindow();
         }
     }
 
     private void updateWindowStatus() {
-        if (WindowUtils.isWindowShowing()) {
+        if (WindowManager.isWindowShowing()) {
             openWindowBtn.setText(R.string.window_off);
         } else {
             openWindowBtn.setText(R.string.window_on);
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (!PermissionUtils.checkFloatWindowPermission()) {
                 Toast.makeText(this, R.string.permission_decline, Toast.LENGTH_SHORT).show();
             } else {
-                WindowUtils.showWindow(this);
+                WindowManager.showWindow(this);
             }
         }
     }

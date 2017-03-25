@@ -1,4 +1,4 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.window.floatview;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.administrator.activityloghelper.MessageEvent;
+import com.example.administrator.activityloghelper.R;
 import com.example.administrator.activityloghelper.services.ViewDebugService;
 
 import org.greenrobot.eventbus.EventBus;

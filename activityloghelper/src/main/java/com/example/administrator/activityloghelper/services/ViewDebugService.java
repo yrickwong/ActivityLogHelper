@@ -11,7 +11,7 @@ import android.view.accessibility.AccessibilityManager;
 
 import com.example.administrator.activityloghelper.LogHelperApplication;
 import com.example.administrator.activityloghelper.MessageEvent;
-import com.example.administrator.activityloghelper.WindowUtils;
+import com.example.administrator.activityloghelper.WindowManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -54,7 +54,7 @@ public class ViewDebugService extends AccessibilityService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        WindowUtils.hideWindow();
+        WindowManager.hideWindow();
     }
 
     /**
