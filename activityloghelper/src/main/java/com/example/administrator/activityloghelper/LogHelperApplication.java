@@ -25,6 +25,7 @@ public class LogHelperApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        registerActivityLifecycleCallbacks(new HookActivityLifecycleCallbacks());
     }
 
     /**

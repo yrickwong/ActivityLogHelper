@@ -19,6 +19,8 @@ import java.util.List;
 
 public class ViewDebugService extends AccessibilityService {
 
+    private static final String FLAG_VIEWDEBUGSERVICE = "/.services.ViewDebugService";
+
     private String currentActivityName;
 
     @Override
@@ -67,7 +69,7 @@ public class ViewDebugService extends AccessibilityService {
         List<AccessibilityServiceInfo> accessibilityServices =
                 accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
         for (AccessibilityServiceInfo info : accessibilityServices) {
-            if (info.getId().equals(LogHelperApplication.getInstance().getPackageName() + "/.services.ViewDebugService")) {
+            if (info.getId().equals(LogHelperApplication.getInstance().getPackageName() + FLAG_VIEWDEBUGSERVICE)) {
                 return true;
             }
         }

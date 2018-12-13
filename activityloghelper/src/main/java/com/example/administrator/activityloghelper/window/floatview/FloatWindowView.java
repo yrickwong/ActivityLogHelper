@@ -8,6 +8,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.administrator.activityloghelper.LogHelperApplication;
 import com.example.administrator.activityloghelper.MessageEvent;
 import com.example.administrator.activityloghelper.R;
 import com.example.administrator.activityloghelper.services.ViewDebugService;
@@ -181,7 +182,7 @@ public class FloatWindowView extends LinearLayout {
         EventBus.getDefault().register(this);
         if (ViewDebugService.isServiceEnabled()) {
             MessageEvent msg = new MessageEvent();
-            msg.info = "com.example.administrator.activityloghelper/.MainActivity";
+            msg.info = LogHelperApplication.getInstance().getPackageName() + "/.MainActivity";
             EventBus.getDefault().post(msg);
         }
     }

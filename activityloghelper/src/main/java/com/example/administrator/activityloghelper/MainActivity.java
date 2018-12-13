@@ -19,22 +19,21 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AccessibilityManager.AccessibilityStateChangeListener {
 
     private final Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 
-    private static final String TAG = "MainActivity";
 
     public static final int REQUEST_CODE = 1;
 
 
-    @Bind(R.id.openWindowBtn)
+    @BindView(R.id.openWindowBtn)
     Button openWindowBtn;
 
-    @Bind(R.id.openServerBtn)
+    @BindView(R.id.openServerBtn)
     Button switchPlugin;
 
     @Override
@@ -110,7 +109,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onAccessibilityStateChanged(boolean enabled) {
-        updateServiceStatus();
+        if (enabled) {
+            switchPlugin.setText(R.string.service_off);
+        } else {
+            switchPlugin.setText(R.string.service_on);
+        }
     }
 
     /**
