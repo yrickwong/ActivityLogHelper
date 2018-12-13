@@ -104,7 +104,9 @@ public abstract class XWindowView implements IXWindow {
     public void onDestroy() {
         Context appContext = LogHelperApplication.getInstance();
         WindowManager windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.removeView(mContentView);
+        if (windowManager != null) {
+            windowManager.removeView(mContentView);
+        }
         updateWindowStatus(false);
     }
 

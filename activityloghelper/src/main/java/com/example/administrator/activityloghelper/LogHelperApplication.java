@@ -66,4 +66,6 @@ public class LogHelperApplication extends Application {
         super.onTrimMemory(level);
         Log.d("wangyi", "onTrimMemory: " + level);
     }
+
+
 }
