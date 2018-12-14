@@ -30,7 +30,7 @@ public abstract class XWindowView implements IXWindow {
                     return LayoutParams.TYPE_APPLICATION_OVERLAY;
                 }
             };
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
             mPolicy = new IWindowPolicy() {
                 @Override
                 public int getWindowManagerParamsType() {
