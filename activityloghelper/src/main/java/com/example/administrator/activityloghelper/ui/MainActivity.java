@@ -1,12 +1,12 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.administrator.activityloghelper.R;
+
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final int REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -12,7 +12,7 @@ public class WindowManager {
     private static IXWindow mFloatWindowLogic;
 
 
-    static void showWindow(final Context context) {
+    public static void showWindow(final Context context) {
         if (mFloatWindowLogic == null) {
             mFloatWindowLogic = createWindowView(TYPE_FLOAT_WINDOW);
         }
@@ -25,7 +25,7 @@ public class WindowManager {
         }
     }
 
-    static boolean isWindowShowing() {
+    public static boolean isWindowShowing() {
         return mFloatWindowLogic != null && mFloatWindowLogic.isShowing();
     }
 

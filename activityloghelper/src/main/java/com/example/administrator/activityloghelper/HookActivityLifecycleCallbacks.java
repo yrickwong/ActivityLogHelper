@@ -14,11 +14,9 @@ public class HookActivityLifecycleCallbacks implements Application.ActivityLifec
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        currentActivity = activity.getClass().getCanonicalName();
-        Log.d(TAG, String.format("onActivityCreated: currentActivity=%s", currentActivity));
-        if(activity instanceof FragmentActivity){
-            FragmentActivity fragmentActivity= (FragmentActivity) activity;
-            fragmentActivity.getSupportFragmentManager().registerFragmentLifecycleCallbacks(new HookFragmentLifecycleCallbacks(),true);
+        if (activity instanceof FragmentActivity) {
+            FragmentActivity fragmentActivity = (FragmentActivity) activity;
+            fragmentActivity.getSupportFragmentManager().registerFragmentLifecycleCallbacks(new HookFragmentLifecycleCallbacks(), true);
         }
     }
 
@@ -29,7 +27,8 @@ public class HookActivityLifecycleCallbacks implements Application.ActivityLifec
 
     @Override
     public void onActivityResumed(Activity activity) {
-
+        currentActivity = activity.getClass().getCanonicalName();
+        Log.d(TAG, String.format("onActivityCreated: currentActivity=%s", currentActivity));
     }
 
     @Override

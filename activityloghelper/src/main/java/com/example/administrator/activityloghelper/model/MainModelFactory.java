@@ -1,4 +1,4 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.model;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;

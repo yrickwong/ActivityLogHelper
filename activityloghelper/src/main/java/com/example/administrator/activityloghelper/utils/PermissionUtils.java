@@ -1,6 +1,5 @@
 package com.example.administrator.activityloghelper.utils;
 
-import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -11,11 +10,12 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
+import com.example.administrator.activityloghelper.IConsumer;
 import com.example.administrator.activityloghelper.LogHelperApplication;
-import com.example.administrator.activityloghelper.MainActivity;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,14 +26,16 @@ import java.lang.reflect.Method;
 
 public class PermissionUtils {
 
-    public static boolean checkFloatWindowPermission() {
+    public static final int PERMISSION_CODE = 1;
+
+    public static boolean checkFloatWindowPermission(Context context) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-            return Settings.canDrawOverlays(LogHelperApplication.getInstance());
+            return Settings.canDrawOverlays(context);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return !RomUtils.isDomesticSpecialRom() || Settings.canDrawOverlays(LogHelperApplication.getInstance());
+            return !RomUtils.isDomesticSpecialRom() || Settings.canDrawOverlays(context);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //AppOpsManager添加于API 19
-            return checkOps();
+            return checkOps(context);
         } else {
             //4.4以下一般都可以直接添加悬浮窗
             return true;
@@ -41,9 +43,9 @@ public class PermissionUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static boolean checkOps() {
+    private static boolean checkOps(Context context) {
         try {
-            Object object = LogHelperApplication.getInstance().getSystemService(Context.APP_OPS_SERVICE);
+            Object object = context.getSystemService(Context.APP_OPS_SERVICE);
             if (object == null) {
                 return false;
             }
@@ -77,21 +79,15 @@ public class PermissionUtils {
      *
      * @param context
      */
-    private static void applyCommonPermission(Context context) {
+    private static void applyCommonPermission(Context context, @NonNull IConsumer<Intent> consumer) {
         try {
             Class clazz = Settings.class;
             Field field = clazz.getDeclaredField("ACTION_MANAGE_OVERLAY_PERMISSION");
             Intent intent = new Intent(field.get(null).toString());
             intent.setData(Uri.parse("package:" + context.getPackageName()));
-            if (context instanceof Activity) {
-                Activity activity = (Activity) context;
-                activity.startActivityForResult(intent, MainActivity.REQUEST_CODE);
-            } else {
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-            }
+            consumer.apply(intent);
         } catch (Exception e) {
-            Toast.makeText(context, "进入设置页面失败，请手动设置", Toast.LENGTH_LONG).show();
+            consumer.apply(null);
         }
     }
 
@@ -385,9 +381,9 @@ public class PermissionUtils {
         return false;
     }
 
-    public static void applyAuthorizePermission(Context context) {
+    public static void applyAuthorizePermission(Context context, @NonNull IConsumer<Intent> consumer) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            applyCommonPermission(context);
+            applyCommonPermission(context, consumer);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (RomUtils.checkIs360Rom()) {
                 apply360Permission(context);

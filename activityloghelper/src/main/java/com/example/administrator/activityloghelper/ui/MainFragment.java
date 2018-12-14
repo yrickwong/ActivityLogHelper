@@ -1,4 +1,4 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.ui;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
@@ -16,6 +16,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.administrator.activityloghelper.IConsumer;
+import com.example.administrator.activityloghelper.R;
+import com.example.administrator.activityloghelper.WindowManager;
+import com.example.administrator.activityloghelper.event.WindowEvent;
+import com.example.administrator.activityloghelper.model.AccessibilityViewModel;
+import com.example.administrator.activityloghelper.model.MainModelFactory;
 import com.example.administrator.activityloghelper.services.ViewDebugService;
 import com.example.administrator.activityloghelper.utils.PermissionUtils;
 
@@ -28,8 +34,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainFragment extends Fragment {
-
-    public static final int REQUEST_CODE = 1;
 
     private final Intent mAccessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 
@@ -61,8 +65,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-            if (!PermissionUtils.checkFloatWindowPermission()) {
+        if (requestCode == PermissionUtils.PERMISSION_CODE) {
+            if (!PermissionUtils.checkFloatWindowPermission(getContext())) {
                 Toast.makeText(getActivity(), R.string.permission_decline, Toast.LENGTH_SHORT).show();
             } else {
                 WindowManager.showWindow(getContext());
@@ -80,10 +84,19 @@ public class MainFragment extends Fragment {
     private void openWindow() {
         if (!WindowManager.isWindowShowing()) {
             //是否需要授权?
-            if (!PermissionUtils.checkFloatWindowPermission()) {
-                PermissionUtils.applyAuthorizePermission(getContext());
+            if (!PermissionUtils.checkFloatWindowPermission(getContext())) {
+                PermissionUtils.applyAuthorizePermission(getContext(), new IConsumer<Intent>() {
+                    @Override
+                    public void apply(Intent intent) {
+                        if (intent != null) {
+                            MainFragment.this.startActivityForResult(intent, PermissionUtils.PERMISSION_CODE);
+                        } else {
+                            Toast.makeText(getContext(), "进入设置页面失败，请手动设置", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             } else {
-                WindowManager.showWindow(getContext());
+                WindowManager.showWindow(getActivity());
             }
         } else {
             WindowManager.hideWindow();
@@ -136,13 +149,16 @@ public class MainFragment extends Fragment {
         updateWindowStatus();
         modelFactory = MainModelFactory.get(getContext());
         accessibilityViewModel = ViewModelProviders.of(this, modelFactory).get(AccessibilityViewModel.class);
-        accessibilityViewModel.getChangeLiveData().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String showText) {
-                switchPlugin.setText(showText);
-            }
-        });
+        accessibilityViewModel.getChangeLiveData().observeForever(accessibilityStatus);
+        getLifecycle().addObserver(accessibilityViewModel);
     }
+
+    private Observer<String> accessibilityStatus = new Observer<String>() {
+        @Override
+        public void onChanged(@Nullable String showText) {
+            switchPlugin.setText(showText);
+        }
+    };
 
     /**
      * 更新当前 ViewDebugService 显示状态
@@ -169,6 +185,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        accessibilityViewModel.getChangeLiveData().removeObserver(accessibilityStatus);
         EventBus.getDefault().unregister(this);
     }
 

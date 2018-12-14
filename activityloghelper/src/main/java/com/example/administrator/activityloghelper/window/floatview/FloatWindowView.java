@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.activityloghelper.LogHelperApplication;
-import com.example.administrator.activityloghelper.MessageEvent;
+import com.example.administrator.activityloghelper.event.MessageEvent;
 import com.example.administrator.activityloghelper.R;
 import com.example.administrator.activityloghelper.services.ViewDebugService;
 

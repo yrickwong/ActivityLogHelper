@@ -1,13 +1,17 @@
-package com.example.administrator.activityloghelper;
+package com.example.administrator.activityloghelper.model;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.util.Log;
 import android.view.accessibility.AccessibilityManager;
+
+import com.example.administrator.activityloghelper.R;
 
 
 public class AccessibilityViewModel extends ViewModel implements LifecycleObserver, AccessibilityManager.AccessibilityStateChangeListener {
@@ -40,8 +44,11 @@ public class AccessibilityViewModel extends ViewModel implements LifecycleObserv
         }
     }
 
+    private static final String TAG = "wangyi";
+
     @Override
     public void onAccessibilityStateChanged(boolean enabled) {
+        Log.d(TAG, "onAccessibilityStateChanged: ");
         mutableLiveData.setValue(applicationContext.getString(enabled ? R.string.service_off : R.string.service_on));
     }
 

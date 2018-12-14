@@ -9,7 +9,7 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 
 import com.example.administrator.activityloghelper.LogHelperApplication;
-import com.example.administrator.activityloghelper.WindowEvent;
+import com.example.administrator.activityloghelper.event.WindowEvent;
 import com.example.administrator.activityloghelper.window.floatview.FloatWindowView;
 
 import org.greenrobot.eventbus.EventBus;

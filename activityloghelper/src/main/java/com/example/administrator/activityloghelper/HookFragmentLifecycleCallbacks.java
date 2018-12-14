@@ -6,9 +6,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 
 public class HookFragmentLifecycleCallbacks extends FragmentManager.FragmentLifecycleCallbacks {
+
+    private static final String TAG = "wangyi";
 
     private String currentFragment;
 
@@ -31,6 +34,7 @@ public class HookFragmentLifecycleCallbacks extends FragmentManager.FragmentLife
     public void onFragmentCreated(@NonNull FragmentManager fm, @NonNull Fragment f, @Nullable Bundle savedInstanceState) {
         super.onFragmentCreated(fm, f, savedInstanceState);
         currentFragment = f.toString();
+
     }
 
     @Override
@@ -51,6 +55,7 @@ public class HookFragmentLifecycleCallbacks extends FragmentManager.FragmentLife
     @Override
     public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
         super.onFragmentResumed(fm, f);
+        Log.d(TAG, "onFragmentCreated: currentFragment="+currentFragment);
     }
 
     @Override

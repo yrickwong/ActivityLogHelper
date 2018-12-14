@@ -10,7 +10,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
 import com.example.administrator.activityloghelper.LogHelperApplication;
-import com.example.administrator.activityloghelper.MessageEvent;
+import com.example.administrator.activityloghelper.event.MessageEvent;
 import com.example.administrator.activityloghelper.WindowManager;
 
 import org.greenrobot.eventbus.EventBus;
