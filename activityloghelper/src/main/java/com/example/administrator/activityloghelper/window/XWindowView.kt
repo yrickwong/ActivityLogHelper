@@ -30,7 +30,7 @@ abstract class XWindowView : IXWindow {
     }
 
     companion object {
-        var mPolicy: IWindowPolicy
+        private var mPolicy: IWindowPolicy //在构造中初始化的话不用加lateinit
 
         init {
             when {
@@ -73,7 +73,7 @@ abstract class XWindowView : IXWindow {
         params.x = screenWidth
         params.y = screenHeight / 2
         if (view is FloatWindowView) {
-            view.layoutParams = params
+            view.mParams = params
         }
         view.setOnClickListener {
             onDestroy()
