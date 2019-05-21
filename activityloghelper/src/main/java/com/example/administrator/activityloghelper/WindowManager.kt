@@ -8,7 +8,7 @@ object WindowManager {
 
     private const val TYPE_FLOAT_WINDOW = 1
 
-    //这里为什么不能用lateinit，是因为若用了
+    //lateinit代表不为空的话 就一定抛出异常,所以lateinit是一种不为null的表现,但它也可以复制
     @JvmStatic
     private var mFloatWindowLogic: IXWindow? = null
 
