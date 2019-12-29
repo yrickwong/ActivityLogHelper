@@ -1,41 +1,74 @@
 package com.example.administrator.activityloghelper.model;
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
-import androidx.lifecycle.*
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.airbnb.mvrx.MvRxState
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
+import com.example.administrator.activityloghelper.LogHelperApplication
+import com.example.administrator.activityloghelper.MvRxViewModel
 import com.example.administrator.activityloghelper.R
 
+data class AccessibilityState(val status: String = "", val windowStatus: String = "") :
+    MvRxState
 
-class AccessibilityViewModel(context: Context) : ViewModel(), LifecycleObserver,
+class AccessibilityViewModel(
+    accessibilityState: AccessibilityState,
+    private val appContext: Context
+) : MvRxViewModel<AccessibilityState>(accessibilityState),
     AccessibilityManager.AccessibilityStateChangeListener {
-    @SuppressLint("StaticFieldLeak")
-    private val appContext: Context = context.applicationContext
-
-    val changedLiveData: MutableLiveData<String> = MutableLiveData()
 
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun onCreate() {
+    init {
         //监听AccessibilityService 变化
-        val accessibilityManager = appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val accessibilityManager =
+            appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         accessibilityManager.addAccessibilityStateChangeListener(this)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
+
+    override fun onCleared() {
+        super.onCleared()
         //监听AccessibilityService 变化
-        val accessibilityManager = appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val accessibilityManager =
+            appContext.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         accessibilityManager.removeAccessibilityStateChangeListener(this)
     }
 
     override fun onAccessibilityStateChanged(enabled: Boolean) {
-        val result: String? = if (enabled) {
-            appContext.getString(R.string.service_off)
-        } else {
-            appContext.getString(R.string.service_on)
+        setState {
+            val result: String = if (enabled) {
+                appContext.getString(R.string.service_off)
+            } else {
+                appContext.getString(R.string.service_on)
+            }
+            copy(status = result)
         }
-        changedLiveData.value = result
     }
 
+    fun updateWindowStatus(isShowing: Boolean) {
+        setState {
+            val text: String = if (isShowing) {
+                appContext.getString(R.string.window_off)
+            } else {
+                appContext.getString(R.string.window_on)
+            }
+            copy(windowStatus = text)
+        }
+    }
+
+    companion object : MvRxViewModelFactory<AccessibilityViewModel, AccessibilityState> {
+
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: AccessibilityState
+        ): AccessibilityViewModel? {
+            val app = viewModelContext.app<LogHelperApplication>()
+            return AccessibilityViewModel(state, app)
+        }
+
+    }
 }

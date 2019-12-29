@@ -8,11 +8,8 @@ import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
 
-import com.example.administrator.activityloghelper.LogHelperApplication
-import com.example.administrator.activityloghelper.event.WindowEvent
 import com.example.administrator.activityloghelper.window.floatview.FloatWindowView
 
-import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by wangyi on 2017/3/24.
@@ -22,11 +19,15 @@ import org.greenrobot.eventbus.EventBus
 abstract class XWindowView : IXWindow {
 
     private lateinit var mContentView: View //不需要对mContentView判空了，若为空，直接throw exception
-    private var showing = false
+
+    var showing = false
+
+    override fun isShowing(): Boolean = showing
+
     override fun onCreate(context: Context) {
         mContentView = onCreateView(context)
         setContentView(mContentView)
-        updateWindowStatus(true)
+        showing = true
     }
 
     companion object {
@@ -44,11 +45,12 @@ abstract class XWindowView : IXWindow {
                         return LayoutParams.TYPE_PHONE
                     }
                 }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> mPolicy = object : IWindowPolicy {
-                    override fun getWindowManagerParamsType(): Int {
-                        return LayoutParams.TYPE_TOAST
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT -> mPolicy =
+                    object : IWindowPolicy {
+                        override fun getWindowManagerParamsType(): Int {
+                            return LayoutParams.TYPE_TOAST
+                        }
                     }
-                }
                 else -> mPolicy = object : IWindowPolicy {
                     override fun getWindowManagerParamsType(): Int {
                         return LayoutParams.TYPE_PHONE
@@ -60,16 +62,18 @@ abstract class XWindowView : IXWindow {
 
     private fun setContentView(view: View) {
         val appContext = view.context.applicationContext
-        val windowManager: WindowManager = appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowManager: WindowManager =
+            appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val screenWidth = windowManager.defaultDisplay.width
         val screenHeight = windowManager.defaultDisplay.height
         val params = LayoutParams()
         params.type = mPolicy.getWindowManagerParamsType()
-        params.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL or LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_KEEP_SCREEN_ON or LayoutParams.FLAG_FULLSCREEN
+        params.flags =
+            LayoutParams.FLAG_NOT_TOUCH_MODAL or LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_KEEP_SCREEN_ON or LayoutParams.FLAG_FULLSCREEN
         params.format = PixelFormat.TRANSLUCENT
         params.width = LayoutParams.MATCH_PARENT
         params.height = LayoutParams.WRAP_CONTENT
-        params.gravity = Gravity.LEFT or Gravity.TOP //按位或|  用  or  表示
+        params.gravity = Gravity.START or Gravity.TOP //按位或|  用  or  表示
         params.x = screenWidth
         params.y = screenHeight / 2
         if (view is FloatWindowView) {
@@ -81,24 +85,16 @@ abstract class XWindowView : IXWindow {
         windowManager.addView(view, params)
     }
 
+    override fun getContext(): Context? = mContentView.context
+
     abstract fun onCreateView(context: Context): View
 
     override fun onDestroy() {
-        val appContext = LogHelperApplication.getInstance()
-        val windowManager: WindowManager = appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val appContext = mContentView.context.applicationContext
+        val windowManager: WindowManager =
+            appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.removeView(mContentView)
-        updateWindowStatus(false)
+        showing = false
     }
 
-
-    override fun isShowing(): Boolean {
-        return showing
-    }
-
-    private fun updateWindowStatus(flag: Boolean) {
-        showing = flag
-        val event = WindowEvent()
-        event.windowstatus = flag
-        EventBus.getDefault().post(event)
-    }
 }

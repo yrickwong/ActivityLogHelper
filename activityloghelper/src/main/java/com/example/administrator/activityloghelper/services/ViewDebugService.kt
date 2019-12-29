@@ -8,38 +8,35 @@ import android.content.pm.PackageManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
-import com.example.administrator.activityloghelper.LogHelperApplication
 import com.example.administrator.activityloghelper.WindowManager
-import com.example.administrator.activityloghelper.event.MessageEvent
-import org.greenrobot.eventbus.EventBus
+
+
+private const val FLAG_VIEW_DEBUG_SERVICE: String = "/.services.ViewDebugService"
+
+/**
+ * 获取 ViewDebugService 是否启用状态
+ *
+ * @return true:serviceEnable
+ */
+fun isViewDebugServiceEnabled(context: Context): Boolean {
+    val accessibilityManager =
+        context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+    val accessibilityServices =
+        accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
+    for (info: AccessibilityServiceInfo in accessibilityServices) {
+        if (info.id == context.packageName + FLAG_VIEW_DEBUG_SERVICE) {
+            return true
+        }
+    }
+    return false
+}
+
 
 class ViewDebugService : AccessibilityService() {
 
     override fun onInterrupt() {
+
     }
-
-
-    companion object {
-        const val FLAG_VIEWDEBUGSERVICE: String = "/.services.ViewDebugService"
-
-        /**
-         * 获取 ViewDebugService 是否启用状态
-         *
-         * @return true:serviceEnable
-         */
-        @JvmStatic
-        fun isServiceEnabled(): Boolean {
-            val accessibilityManager = LogHelperApplication.getInstance().getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-            val accessibilityServices = accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
-            for (info: AccessibilityServiceInfo in accessibilityServices) {
-                if (info.id == LogHelperApplication.getInstance().packageName + FLAG_VIEWDEBUGSERVICE) {
-                    return true
-                }
-            }
-            return false
-        }
-    }
-
 
     private var currentActivityName: String? = null
 
@@ -65,9 +62,7 @@ class ViewDebugService : AccessibilityService() {
             // 变化，并无activity调转
             Log.d("ViewDebugService", "e=${e.localizedMessage}")
         }
-        val msg = MessageEvent()
-        msg.info = currentActivityName
-        EventBus.getDefault().post(msg)
+        ViewDebugMonitor.onUpdateMsg(msg = currentActivityName)
     }
 
 
@@ -75,4 +70,13 @@ class ViewDebugService : AccessibilityService() {
         super.onDestroy()
         WindowManager.hideWindow()
     }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+    }
+
+}
+
+interface ViewDebugObserver {
+    fun updateCurrentActivityName(msg: String?)
 }

@@ -9,11 +9,11 @@ import android.content.Context
 
 interface IXWindow {
 
+    fun getContext(): Context?
+
     fun onCreate(context: Context)
 
-
     fun onDestroy()
-
 
     fun isShowing(): Boolean
 }

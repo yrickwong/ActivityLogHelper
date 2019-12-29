@@ -8,13 +8,9 @@ import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.example.administrator.activityloghelper.LogHelperApplication
 import com.example.administrator.activityloghelper.R
-import com.example.administrator.activityloghelper.event.MessageEvent
-import com.example.administrator.activityloghelper.services.ViewDebugService
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import com.example.administrator.activityloghelper.services.ViewDebugMonitor
+import com.example.administrator.activityloghelper.services.isViewDebugServiceEnabled
 
 /**
  * view不应该有业务逻辑
@@ -128,7 +124,7 @@ class FloatWindowView(context: Context) : LinearLayout(context) {
         windowManager.updateViewLayout(this, mParams)
     }
 
-    fun setCurrentPosition(): Position {
+    private fun setCurrentPosition(): Position {
         currentPosition.x = mParams.x
         currentPosition.y = mParams.y
         return currentPosition
@@ -147,22 +143,16 @@ class FloatWindowView(context: Context) : LinearLayout(context) {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        EventBus.getDefault().register(this)
-        if (ViewDebugService.isServiceEnabled()) {
-            val msg = MessageEvent()
-            msg.info = LogHelperApplication.getInstance().packageName + "/.MainActivity"
-            EventBus.getDefault().post(msg)
+        if (isViewDebugServiceEnabled(context)) {
+            ViewDebugMonitor.onUpdateMsg(context.packageName + "/.MainActivity")
         }
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        EventBus.getDefault().unregister(this);
-    }
 
+    var text: String? = null
+        set(value) {
+            debugView.text = value
+            field = value
+        }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onWindowChanged(msg: MessageEvent) {
-        debugView.text = msg.info
-    }
 }
